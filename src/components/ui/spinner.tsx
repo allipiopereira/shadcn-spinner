@@ -1,49 +1,49 @@
-import * as React from "react";
+import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
+import * as React from "react";
 
-const spinnerVariants = cva(
-  "relative block opacity-[0.65]",
-  {
-    variants: {
-      size: {
-        sm: "w-4 h-4",
-        md: "w-6 h-6",
-        lg: "w-8 h-8",
-      },
+const spinnerVariants = cva("relative block opacity-[0.65]", {
+  variants: {
+    size: {
+      sm: "w-4 h-4",
+      md: "w-6 h-6",
+      lg: "w-8 h-8",
     },
-    defaultVariants: {
-      size: "sm",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    size: "sm",
+  },
+});
 
 export interface SpinnerProps
   extends React.HTMLAttributes<HTMLSpanElement>,
-  VariantProps<typeof spinnerVariants> {
+    VariantProps<typeof spinnerVariants> {
   loading?: boolean;
   asChild?: boolean;
+  children?: React.ReactNode;
+  defaultText?: string;
+  fallback?: string;
 }
 
 const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
-  ({ className, size, loading = true, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      size,
+      loading = false,
+      asChild = false,
+      children,
+      defaultText,
+      fallback,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "span";
 
-    const [bgColorClass, filteredClassName] = React.useMemo(() => {
-      const bgClass = className?.match(/(?:dark:bg-|bg-)\S+/g) || [];
-      const filteredClasses = className?.replace(/(?:dark:bg-|bg-)\S+/g, '').trim();
-      return [bgClass, filteredClasses];
-    }, [className]);
-
-    if (!loading) return null;
-
-    return (
-      <Comp
-        className={cn(spinnerVariants({ size, className: filteredClassName }))}
-        ref={ref}
-        {...props}
-      >
+    const renderSpinnerIcon = () => (
+      <Comp className={cn(spinnerVariants({ size }))} ref={ref} {...props}>
         {Array.from({ length: 8 }).map((_, i) => (
           <span
             key={i}
@@ -54,11 +54,30 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
             }}
           >
             <span
-              className={cn("block w-full h-[30%] rounded-full", bgColorClass)}
+              className={cn("block w-full h-[30%] rounded-full", className)}
             ></span>
           </span>
         ))}
       </Comp>
+    );
+
+    if (loading) {
+      if (fallback) {
+        return (
+          <span className="flex items-center gap-2">
+            {renderSpinnerIcon()}
+            <span>{fallback}</span>
+          </span>
+        );
+      }
+      return renderSpinnerIcon();
+    }
+
+    return (
+      <span className="flex items-center gap-2">
+        {defaultText && <span>{defaultText}</span>}
+        {children}
+      </span>
     );
   }
 );
