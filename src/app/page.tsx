@@ -98,9 +98,10 @@ export default function Home() {
 
         <div>
           <h2 className="text-lg font-semibold">Step 1</h2>
-          <h2 className="text-sm font-medium opacity-70">
-            Adding animations to the tailwind.config.ts file.
+          <h2 className="text-sm font-medium opacity-70 mb-2">
+            Adding the component to your project
           </h2>
+
 
           <h2 className="text-sm font-semibold mb-1 mt-3">
             tailwind.config.ts
@@ -224,13 +225,18 @@ const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
 Spinner.displayName = "Spinner";
 
 export { Spinner };
+
+
+          <CodeBlock code={`
+\`\`\`
+npx shadcn add https://shadcn-spinner.vercel.app/api/r/spinner
 \`\`\`
 `}
           />
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold">Step 3</h2>
+          <h2 className="text-lg font-semibold">Step 2</h2>
           <h2 className="text-sm font-medium opacity-70 mb-2">
             Now just use it.
           </h2>
